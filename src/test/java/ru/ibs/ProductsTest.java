@@ -30,7 +30,9 @@ public class ProductsTest extends BaseTest {
         ProductsPage productsPage = new ProductsPage(chromeDriver);
 
         //Открыта страница "Товары".Проверить отображение названия таблицы;
-        Assertions.assertEquals("Список товаров", productsPage.getTableName().getText());
+        Assertions.assertEquals("Список товаров",
+                productsPage.getTableName().getText(),
+                "Таблица не названа 'Список товаров'");
 
         List<String> stringList = Arrays.asList(split);
         //Проверить отображение заголовков таблицы.В таблице есть заголовки "Наименование", "Тип","Экзотический"
@@ -38,20 +40,23 @@ public class ProductsTest extends BaseTest {
                 .stream()
                 .map(WebElement::getText)
                 .collect(Collectors.toList())
-                .containsAll(stringList));
+                .containsAll(stringList),
+                "В таблице нет заголовков(есть,но не все) из параметров");
 
         //Проверить отображение строк таблицы(достаточно проверить, что идентификаторы не null)
         Assertions.assertTrue(
                 productsPage.getIdentifiers()
                         .stream().
-                        noneMatch(s -> s.getText() == null));
+                        noneMatch(s -> s.getText() == null),
+                "Идентификатор строки null");
 
         //Проверить кнопку "Добавить".Кнопка кликабельна,имеет синий цвет,имеет надпись "Добавить"
         Assertions.assertTrue(
                 productsPage.getAddButton().isDisplayed()
                         && productsPage.getAddButton().getText().equals("Добавить")
                         && Color.fromString(productsPage.getAddButton().getCssValue("background-color"))
-                        .asHex().equals("#007bff"));
+                        .asHex().equals("#007bff"),
+                "Одна или более проверок кнопки 'Сохранить' не прошла");
     }
 
     @DisplayName("Проверка добавления товара с валидными данными")
@@ -66,7 +71,8 @@ public class ProductsTest extends BaseTest {
         //Открыта страница "Товары".Проверить отображение названия таблицы;
         Assertions.assertTrue(productsPage
                 .getTableName()
-                .isDisplayed());
+                .isDisplayed(),
+                "Заголовок страницы не отображен");
 
         //Нажать кнопку "Добавить"
         productsPage.getAddButton().click();
@@ -76,51 +82,60 @@ public class ProductsTest extends BaseTest {
         // Открыто всплывающее окно "Добавление товара"
         Assertions.assertTrue(
                 productsPage.getAddProductHeader()
-                        .isDisplayed());
+                        .isDisplayed(),
+                "Заголовок формы добавления не отображен");
         //Окно содержит поле "Наименование".  ;
         Assertions.assertTrue(
                 productsPage.getAddProductName()
-                        .isDisplayed());
+                        .isDisplayed(),
+                "Поле ввода 'Наименование' не отображен");
         // Окно содержит поле "Тип".
         Assertions.assertTrue(
                 productsPage.getAddType()
-                        .isDisplayed());
+                        .isDisplayed(),
+                "Выпадающий список 'Тип' не отображен");
         // В поле "Тип" на выбор 2 варианта "Фрукт", "Овощ".
         Assertions.assertTrue(productsPage.getAllAddTypes().size() == 2
                 && productsPage.getAllAddTypes()
                 .stream()
                 .map(WebElement::getText)
                 .collect(Collectors.toList())
-                .containsAll(Arrays.asList("Овощ", "Фрукт")));
+                .containsAll(Arrays.asList("Овощ", "Фрукт")),
+                "Проверки на количество и/или содержимое поля 'Тип' не прошли");
         //Окно содержит чек-бокс "Экзотический".
         Assertions.assertTrue(
                 productsPage.getAddExoticCheckBox()
-                        .isDisplayed());
+                        .isDisplayed(),
+                "Чек-бокс не отображен");
         //Окно содержит кнопку "Сохранить"
         Assertions.assertTrue(
                 productsPage.getSaveButton()
-                        .isDisplayed());
+                        .isDisplayed(),
+                "Кнопка 'Сохранить' не отображена");
 
         //В поле "Наименование" ввести значение переменной имени
         productsPage.getAddProductName().sendKeys(name);
         //Введено значение переменной "имя" в поле "Наименование";
         Assertions.assertEquals(
                 name, productsPage.getAddProductName()
-                        .getAttribute("value"));
+                        .getAttribute("value"),
+                "Имя в поле Наименование не соответствует введенному");
 
         //В поле "Тип" выбрать значение переменной "тип";
         productsPage.setAddType(type);
         //Выбрано значение переменной "тип" в поле "Тип";
         Assertions.assertTrue(productsPage
                 .getAddType().getDomProperty("textContent")
-                .contains(type));
+                .contains(type),
+                "Тип в поле Тип не соответствует введенному");
 
         // Активировать чек-бокс "Экзотический";
         productsPage.setAddExoticCheckBox(exotic);
         //Чек-бокс "Экзотический" активирован;
         Assertions.assertTrue(
                 productsPage.getAddExoticCheckBox()
-                        .isSelected());
+                        .isSelected(),
+                "Чек-бокс не активирован");
 
         //Нажать кнопку "Сохранить".
         productsPage.getSaveButton().click();
@@ -130,7 +145,8 @@ public class ProductsTest extends BaseTest {
         //Проверить, что закрыто всплывающее окно "Добавление товара"
         Assertions.assertFalse(
                 productsPage.getAddProductHeader()
-                        .isDisplayed());
+                        .isDisplayed(),
+                "Форма добавления не закрыта");
         //Проверить, что в таблице есть строка со всеми данными-параметрами
         List<String> list = Arrays.asList(name, type, exotic);
         Assertions.assertTrue(productsPage
@@ -143,6 +159,6 @@ public class ProductsTest extends BaseTest {
                         if (!s.contains(l)) return false;
                     }
                     return true;
-                }));
+                }),"Данные в таблице не соответствуют добавляемым параметрам");
     }
 }
