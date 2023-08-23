@@ -29,7 +29,9 @@ public class BaseTest {
      */
     @BeforeAll
     public static void beforeAll() {
-        System.setProperty("webdriver.chrome.driver", System.getenv("CHROME_DRIVER"));
+
+        //System.setProperty("webdriver.chrome.driver", System.getenv("CHROME_DRIVER"));
+        System.setProperty("webdriver.chrome.driver","src/main/resources/chromedriver.exe");
     }
 
     /**
@@ -38,7 +40,7 @@ public class BaseTest {
     @BeforeEach
     public void before() {
         chromeDriver = new ChromeDriver();
-        wait=new WebDriverWait(chromeDriver,Duration.ofSeconds(10));
+        wait = new WebDriverWait(chromeDriver, Duration.ofSeconds(10));
         chromeDriver.manage().window().maximize();
         chromeDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
         chromeDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));

@@ -1,16 +1,20 @@
 package ru.ibs.pages;
 
+import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Страница вкладки "Товары"
+ * Модель страницы "Товары"
  */
+@Getter
 public class ProductsPage {
 
     protected WebDriver chromeDriver;
@@ -28,7 +32,7 @@ public class ProductsPage {
      * Строки с данными
      */
     @FindBy(xpath = "//div/h5/../table/tbody//tr")
-    private List<WebElement> tableRows;
+    private List<WebElement> rowsData;
 
     /**
      * Кнопка "Добавить"
@@ -61,49 +65,49 @@ public class ProductsPage {
     @FindBy(xpath = "//div[@id='editModal']//div[@class='modal-footer']/button[@id='save']")
     private WebElement saveButton;
 
+    /**
+     * Конструктор с использованием PageFactory Pattern
+     *
+     * @param chromeDriver передаваемый драйвер
+     */
     public ProductsPage(WebDriver chromeDriver) {
         PageFactory.initElements(chromeDriver, this);
         this.chromeDriver = chromeDriver;
     }
 
-    public WebElement getTableName() {
-        return tableName;
-    }
-
-    public List<WebElement> getTableHeads() {
-        return tableHeads;
-    }
-
-    public List<WebElement> getTableRows() {
-        return tableRows;
-    }
-
-    public WebElement getAddButton() {
-        return addButton;
-    }
-
-    public WebElement getAddProductHeader() {
-        return addProductHeader;
-    }
-
-    public WebElement getAddProductName() {
-        return addProductName;
-    }
-
-    public WebElement getAddType() {
-        return addType;
-    }
-
-    public WebElement getAddExoticCheckBox() {
-        return addExoticCheckBox;
-    }
-
-    public WebElement getSaveButton() {
-        return saveButton;
-    }
-
+    /**
+     * Функция установки поля "Тип"
+     *
+     * @param string Строка с полным текстом искомого "Типа"
+     */
     public void setAddType(String string) {
-        getAddType().findElement(By.xpath("//option[text()='"+string+"']")).click();
+        getAddType().findElement(By.xpath("//option[text()='" + string + "']")).click();
 
     }
+
+    public ArrayList<WebElement> getAllAddTypes() {
+        return new ArrayList<>(getAddType().findElements(By.xpath("./option")));
+    }
+
+    /**
+     * Функция установки чек-бокса
+     *
+     * @param exotic переменная вида "true"|"false"
+     */
+    public void setAddExoticCheckBox(String exotic) {
+        if (exotic.equals("true")) getAddExoticCheckBox().click();
+    }
+
+    /**
+     * Функция получения id строк
+     *
+     * @return Список идентификаторов
+     */
+    public List<WebElement> getIdentifiers() {
+        return getRowsData()
+                .stream()
+                .map(s -> s.findElement(By.xpath("./th")))
+                .collect(Collectors.toList());
+    }
+
 }
