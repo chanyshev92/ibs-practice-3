@@ -66,7 +66,7 @@ public class ProductsPage {
     private WebElement saveButton;
 
     /**
-     * Конструктор с использованием PageFactory Pattern
+     * Конструктор с использованием PageFactory Pattern     *
      *
      * @param chromeDriver передаваемый драйвер
      */
@@ -85,6 +85,11 @@ public class ProductsPage {
 
     }
 
+    /**
+     * Функция возвращает все варианты в выпадающем списке "Тип"
+     *
+     * @return Список всех элементов
+     */
     public ArrayList<WebElement> getAllAddTypes() {
         return new ArrayList<>(getAddType().findElements(By.xpath("./option")));
     }

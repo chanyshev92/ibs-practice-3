@@ -32,7 +32,6 @@ public class ProductsTest extends BaseTest {
         //Открыта страница "Товары".Проверить отображение названия таблицы;
         Assertions.assertEquals("Список товаров", productsPage.getTableName().getText());
 
-        //List<String> stringList = Arrays.asList("Наименование", "Тип", "Экзотический");
         List<String> stringList = Arrays.asList(split);
         //Проверить отображение заголовков таблицы.В таблице есть заголовки "Наименование", "Тип","Экзотический"
         Assertions.assertTrue(productsPage.getTableHeads()
